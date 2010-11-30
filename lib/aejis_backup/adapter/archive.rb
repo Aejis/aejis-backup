@@ -1,6 +1,6 @@
 module AejisBackup
   module Adapter
-    class Archive
+    class Archive < Abstract
     end
   end
 end
