@@ -1,5 +1,5 @@
 module AejisBackup
-  module Storage
+  module Store
     class CloudFiles
     end
   end
