@@ -1,15 +1,16 @@
 require "aejis_backup/adapter"
 require "aejis_backup/store"
+require "aejis_backup/backup"
 
 module AejisBackup
   class Configuration
-    def initialize(&block)
+    def initialize
       @sources  = Hash.new
       @storages = Hash.new
-      instance_exec(&block)
+      @backups  = Hash.new
     end
 
-    attr_reader :sources, :storages
+    attr_reader :sources, :storages, :backups
 
     def source(name, adapter, &block)
       if adapter.is_a?(Hash)
@@ -22,15 +23,15 @@ module AejisBackup
 
       required_adapter = case adapter.to_sym
         when :archive
-          AejisBackup::Adapter::Archive
+          Adapter::Archive
         when :mongo
-          AejisBackup::Adapter::Mongo
+          Adapter::Mongo
         when :mysql
-          AejisBackup::Adapter::Mysql
+          Adapter::Mysql
         when :pg, :postgres, :postgresql
-          AejisBackup::Adapter::Postgresql
+          Adapter::Postgresql
         when :sqlite, :sqlite3
-          AejisBackup::Adapter::Sqlite
+          Adapter::Sqlite
         else
           raise "Adapter #{adapter.to_s} not known"
       end
@@ -43,25 +44,31 @@ module AejisBackup
       raise "#{name.to_s.capitalize} storage not configured" unless block_given?
       required_store = case store.to_sym
         when :cloudfiles
-          AejisBackup::Store::CloudFiles
+          Store::CloudFiles
         when :dropbox
-          AejisBackup::Store::Dropbox
+          Store::Dropbox
         when :ftp
-          AejisBackup::Store::Ftp
+          Store::Ftp
         when :local
-          AejisBackup::Store::Local
+          Store::Local
         when :s3, :amazon
-          AejisBackup::Store::S3
+          Store::S3
         when :scp
-          AejisBackup::Store::Scp
+          Store::Scp
         when :sftp
-          AejisBackup::Store::Sftp
+          Store::Sftp
         else
           raise "Store #{adapter.to_s} not known"
       end
       store = required_store.new
       store.instance_eval(&block)
       @storages[name] = store
+    end
+
+    def backup(name, &block)
+      backup = Backup.new()
+      backup.instance_eval(&block)
+      @backups[name] = backup
     end
 
     def rails(environment=:production)

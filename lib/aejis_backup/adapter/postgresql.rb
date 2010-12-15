@@ -2,9 +2,9 @@ module AejisBackup
   module Adapter
     class Postgresql < Abstract
 
-      def get!
+      def get!(tmpfile)
         ENV['PGPASSWORD'] = password
-        run "pg_dump -U #{user} #{arguments} #{database}"
+        run("pg_dump -U #{user} --file=#{tmpfile}.sql #{arguments} #{database}", "Dump database #{database}", :green)
         ENV['PGPASSWORD'] = nil
       end
 
@@ -12,9 +12,8 @@ module AejisBackup
 
         def arguments
           args = []
-          args << "--file=#{backup_name}.sql"
-          args << "--format=t" # Compress dump
-          args << "--compress=8" # TODO - compression level
+          args << "--format=t"
+          # TODO - compression level
           args.join(' ')
         end
     end

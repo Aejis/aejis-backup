@@ -1,5 +1,6 @@
 module AejisBackup
   module Store
+    autoload :Abstract,   'aejis_backup/store/abstract'
     autoload :CloudFiles, 'aejis_backup/store/cloud_files'
     autoload :Dropbox,    'aejis_backup/store/dropbox'
     autoload :Ftp,        'aejis_backup/store/ftp'

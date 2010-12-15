@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'rubygems'
+require 'aejis_backup'
+
+options  = {}
+optparse = OptionParser.new do |opts|
+  opts.banner = "\nUsage: backup [options]\n "
+
+  opts.on('-c', '--config [PATH]', "Path to backup configuration") do |config|
+    options[:config] = config
+  end
+
+  opts.on('-b x,y,z', Array, "List of backups to run") do |list|
+    options[:list] = list
+  end
+
+  opts.on_tail('-s', '--silent', 'Do not print messages to STDOUT') do
+    BACKUP_SILENT = true
+  end
+end
+
+optparse.parse!
+
+AejisBackup.config_path = options[:config]
+AejisBackup.load
+AejisBackup.run!(options[:list])
