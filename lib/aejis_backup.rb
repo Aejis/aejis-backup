@@ -24,6 +24,7 @@ module AejisBackup
     end
 
     def run!(*names)
+      say("Start backups", :cyan)
       # Do backup for all backup sets if sets not defined
       names = config.backups.keys if names.first.nil?
 
@@ -32,7 +33,7 @@ module AejisBackup
 
         # Get backup, define file- and dirnames
         backup  = config.backups[name]
-        dirname = "backup-#{Time.now.to_i.to_s}"
+        dirname = "#{name}-#{Time.now.to_i.to_s}"
         tmpdir  = File.join(backup.tmpdir, dirname)
 
         # Make temporary directory
@@ -57,6 +58,8 @@ module AejisBackup
         FileUtils.rm_rf([archive, tmpdir], :secure => true)
         say("Done!", :yellow)
       end
+
+      say("Finish backups", :cyan)
     end
   end
 end
