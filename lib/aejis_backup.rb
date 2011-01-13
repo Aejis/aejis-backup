@@ -28,7 +28,7 @@ module AejisBackup
       # Do backup for all backup sets if sets not defined
       names = config.backups.keys if names.first.nil?
 
-      names.each do |name|
+      names.flatten.each do |name|
         say("Backup '#{name}'", :yellow)
 
         # Get backup, define file- and dirnames
