@@ -32,7 +32,7 @@ module AejisBackup
         say("Backup '#{name}'", :yellow)
 
         # Get backup, define file- and dirnames
-        backup  = config.backups[name]
+        backup  = config.backups[name.to_sym]
         dirname = "#{name}-#{Time.now.to_i.to_s}"
         tmpdir  = File.join(backup.tmpdir, dirname)
 

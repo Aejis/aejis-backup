@@ -1,0 +1,43 @@
+Example config:
+
+  AejisBackup.config do
+    source('mydb', :postgresql) do
+      user      'rails'
+      password  'secret'
+      database  'application'
+    end
+
+    source('files', :archive) do
+      path '/Users/ptico/application/public/system'
+      format :xz
+      compression_level :high
+    end
+
+    storage('ptico-s3', :s3) do
+      access_key_id     'ACCESSKEY'
+      secret_access_key 'sEcRetACcesSkey'
+      host              's3.amazonaws.com'
+      bucket            'aejis'
+      use_ssl
+    end
+
+    storage('local', :local) do
+      path '/Users/ptico/backup'
+    end
+
+    backup(:hourly_backup) do
+      source 'mydb', 'files'
+      target 'local'
+    end
+
+    backup(:daily_backup) do
+      source 'mydb', 'files'
+      target 'ptico-s3'
+    end
+  end
+
+Run:
+
+  backup -c /path/to/config.rb
+
+  backup -c /path/to/config.rb -b daily_backup
